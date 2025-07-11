@@ -1,0 +1,25 @@
+{
+  "name": "dify-api-test",
+  "version": "1.0.0",
+  "description": "Dify API 接口测试脚本",
+  "main": "test-dify-api.js",
+  "scripts": {
+    "test": "node test-dify-api.js",
+    "test:quick": "node quick-test.js",
+    "test:chat": "node -e \"require('./test-dify-api').testChatAPI()\"",
+    "test:dataset": "node -e \"require('./test-dify-api').testCreateDataset()\"",
+    "install-deps": "npm install axios form-data"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  },
+  "keywords": [
+    "dify",
+    "api",
+    "test",
+    "yudao"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
