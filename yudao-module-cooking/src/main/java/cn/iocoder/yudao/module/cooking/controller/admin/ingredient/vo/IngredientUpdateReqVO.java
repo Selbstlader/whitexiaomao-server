@@ -7,14 +7,19 @@ import lombok.ToString;
 
 import jakarta.validation.constraints.NotNull;
 
-@Schema(description = "管理后台 - 食材更新 Request VO")
+/**
+ * 配料更新 Request VO
+ *
+ * @author 芋道源碼
+ */
+@Schema(description = "管理後台 - 配料更新 Request VO")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class IngredientUpdateReqVO extends IngredientBaseVO {
 
-    @Schema(description = "食材编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
-    @NotNull(message = "食材编号不能为空")
+    @Schema(description = "配料編號", required = true, example = "1024")
+    @NotNull(message = "配料編號不能為空")
     private Long id;
 
-}
+} 

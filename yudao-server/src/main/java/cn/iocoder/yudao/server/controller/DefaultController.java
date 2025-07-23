@@ -20,6 +20,9 @@ import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeC
 @Slf4j
 public class DefaultController {
 
+    // 已註釋所有模塊攔截
+
+    /*
     @RequestMapping("/admin-api/bpm/**")
     public CommonResult<Boolean> bpm404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
@@ -75,6 +78,13 @@ public class DefaultController {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
                 "[IoT 物联网 yudao-module-iot - 已禁用][参考 https://doc.iocoder.cn/iot/build/ 开启]");
     }
+
+    @RequestMapping(value = { "/admin-api/cooking/dish/**"})
+    public CommonResult<Boolean> cookingDish404() {
+        return CommonResult.error(NOT_IMPLEMENTED.getCode(),
+                "[烹飪模塊 yudao-module-cooking - 表結構未導入][參考 https://cloud.iocoder.cn/ai/build/ 開啟]");
+    }
+    */
 
     /**
      * 测试接口：打印 query、header、body

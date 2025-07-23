@@ -1,79 +1,72 @@
 package cn.iocoder.yudao.module.cooking.service.ingredient;
 
-import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.module.cooking.controller.admin.ingredient.vo.*;
-import cn.iocoder.yudao.module.cooking.dal.dataobject.ingredient.IngredientDO;
+import cn.iocoder.yudao.module.cooking.controller.admin.ingredient.vo.IngredientBatchCreateReqVO;
+import cn.iocoder.yudao.module.cooking.controller.admin.ingredient.vo.IngredientCreateReqVO;
+import cn.iocoder.yudao.module.cooking.controller.admin.ingredient.vo.IngredientUpdateReqVO;
+import cn.iocoder.yudao.module.cooking.dal.dataobject.IngredientDO;
 
 import jakarta.validation.Valid;
 import java.util.List;
 
 /**
- * 食材 Service 接口
+ * 配料 Service 接口
  *
- * @author 芋道源码
+ * @author 芋道源碼
  */
 public interface IngredientService {
 
     /**
-     * 创建食材
+     * 創建配料
      *
-     * @param createReqVO 创建信息
-     * @return 编号
+     * @param createReqVO 創建信息
+     * @return 編號
      */
     Long createIngredient(@Valid IngredientCreateReqVO createReqVO);
 
     /**
-     * 更新食材
+     * 更新配料
      *
      * @param updateReqVO 更新信息
      */
     void updateIngredient(@Valid IngredientUpdateReqVO updateReqVO);
 
     /**
-     * 删除食材
+     * 刪除配料
      *
-     * @param id 编号
+     * @param id 編號
      */
     void deleteIngredient(Long id);
 
     /**
-     * 获得食材
+     * 批量創建配料
      *
-     * @param id 编号
-     * @return 食材
+     * @param reqVO 批量創建信息
+     * @return 編號列表
+     */
+    List<Long> batchCreateIngredient(@Valid IngredientBatchCreateReqVO reqVO);
+
+    /**
+     * 獲得配料
+     *
+     * @param id 編號
+     * @return 配料
      */
     IngredientDO getIngredient(Long id);
 
     /**
-     * 获得食材分页
+     * 獲得指定菜品的配料列表
      *
-     * @param pageReqVO 分页查询
-     * @return 食材分页
+     * @param dishId 菜品編號
+     * @return 配料列表
      */
-    PageResult<IngredientDO> getIngredientPage(IngredientPageReqVO pageReqVO);
+    List<IngredientDO> getIngredientListByDishId(Long dishId);
 
     /**
-     * 获得食材列表, 用于 Excel 导出
+     * 校驗配料存在於指定菜品下
      *
-     * @param exportReqVO 查询条件
-     * @return 食材列表
+     * @param id 配料編號
+     * @param dishId 菜品編號
      */
-    List<IngredientDO> getIngredientList(IngredientExportReqVO exportReqVO);
+    void validateIngredientBelongsToDish(Long id, Long dishId);
 
-    /**
-     * 根据分类获得食材列表
-     *
-     * @param categoryId 分类编号
-     * @return 食材列表
-     */
-    List<IngredientDO> getIngredientListByCategory(Long categoryId);
-
-    /**
-     * 搜索食材
-     *
-     * @param keyword 关键词
-     * @return 食材列表
-     */
-    List<IngredientDO> searchIngredients(String keyword);
-
-}
+} 

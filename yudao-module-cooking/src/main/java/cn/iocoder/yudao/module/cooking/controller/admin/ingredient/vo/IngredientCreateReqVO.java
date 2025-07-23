@@ -5,10 +5,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@Schema(description = "管理后台 - 食材创建 Request VO")
+@Schema(description = "管理後台 - 配料創建 Request VO")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class IngredientCreateReqVO extends IngredientBaseVO {
 
-}
+} 
