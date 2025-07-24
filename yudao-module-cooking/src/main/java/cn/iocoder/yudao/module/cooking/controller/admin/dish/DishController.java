@@ -8,6 +8,7 @@ import cn.iocoder.yudao.module.cooking.dal.dataobject.DishDO;
 import cn.iocoder.yudao.module.cooking.dal.dataobject.category.CategoryDO;
 import cn.iocoder.yudao.module.cooking.service.category.CategoryService;
 import cn.iocoder.yudao.module.cooking.service.dish.DishService;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
+import cn.iocoder.yudao.module.cooking.dal.mysql.dish.DishMapper;
 
 /**
  * 管理後台 - 菜品
@@ -38,6 +40,9 @@ public class DishController {
 
     @Resource
     private CategoryService categoryService;
+
+    @Resource
+    private DishMapper dishMapper;
 
     @PostMapping("/create")
     @Operation(summary = "創建菜品")
@@ -85,7 +90,15 @@ public class DishController {
     @GetMapping("/list-all-simple")
     @Operation(summary = "獲得所有菜品精簡列表", description = "主要用於前端的下拉選項")
     public CommonResult<List<DishSimpleRespVO>> getSimpleDishList() {
-        List<DishDO> list = dishService.getDishList(null);
+        // 直接查詢數據庫，繞過可能有問題的 service 層
+        // 添加以下代碼
+        System.out.println("=== DEBUG: 嘗試獲取菜品列表 ===");
+        
+        // 方法一：直接查詢（如果 DishDO 的 @TableName 正確）
+        List<DishDO> list = dishMapper.selectList(new LambdaQueryWrapperX<DishDO>()
+                .eq(DishDO::getDeleted, false));
+                
+        System.out.println("=== DEBUG: 獲取到菜品數量: " + list.size() + " ===");
         return success(DishConvert.INSTANCE.convertList02(list));
     }
 

@@ -21,5 +21,8 @@ public class StepRespVO extends StepBaseVO {
     
     @Schema(description = "步驟圖片URL")
     private String imageUrl;
+    
+    @Schema(description = "菜品名稱")
+    private String dishName;
 
 } 

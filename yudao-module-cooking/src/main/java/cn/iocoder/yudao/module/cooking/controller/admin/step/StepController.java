@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.cooking.controller.admin.step;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.cooking.controller.admin.step.vo.*;
 import cn.iocoder.yudao.module.cooking.convert.step.StepConvert;
+import cn.iocoder.yudao.module.cooking.dal.dataobject.DishDO;
 import cn.iocoder.yudao.module.cooking.dal.dataobject.StepDO;
 import cn.iocoder.yudao.module.cooking.service.dish.DishService;
 import cn.iocoder.yudao.module.cooking.service.step.StepService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -73,11 +75,19 @@ public class StepController {
     @PreAuthorize("@ss.hasPermission('cooking:step:query')")
     public CommonResult<List<StepRespVO>> getStepListByDishId(@Valid StepListReqVO reqVO) {
         // 校驗菜品是否存在
-        if (dishService.getDish(reqVO.getDishId()) == null) {
+        DishDO dish = dishService.getDish(reqVO.getDishId());
+        if (dish == null) {
             return success(List.of());
         }
+        
         List<StepDO> list = stepService.getStepListByDishId(reqVO.getDishId());
-        return success(list.stream().map(this::buildStepRespVO).collect(Collectors.toList()));
+        
+        // 一次性查詢所有步驟對應的菜品名稱
+        Map<Long, DishDO> dishMap = dishService.getDishMap(List.of(reqVO.getDishId()));
+        
+        return success(list.stream()
+                .map(step -> buildStepRespVO(step, dishMap.get(step.getDishId())))
+                .collect(Collectors.toList()));
     }
 
     @PostMapping("/batch-create")
@@ -94,11 +104,39 @@ public class StepController {
      * @return 步驟響應 VO
      */
     private StepRespVO buildStepRespVO(StepDO step) {
+        if (step == null) {
+            return null;
+        }
+        
+        // 查詢菜品信息
+        DishDO dish = dishService.getDish(step.getDishId());
+        return buildStepRespVO(step, dish);
+    }
+    
+    /**
+     * 構建烹飪步驟響應 VO，添加圖片URL和菜品名稱
+     *
+     * @param step 步驟DO
+     * @param dish 菜品DO
+     * @return 步驟響應 VO
+     */
+    private StepRespVO buildStepRespVO(StepDO step, DishDO dish) {
+        if (step == null) {
+            return null;
+        }
+        
         StepRespVO respVO = StepConvert.INSTANCE.convert(step);
+        
+        // 設置圖片URL
         if (respVO != null && respVO.getImageName() != null) {
-            // 構建圖片URL
             respVO.setImageUrl("/api/cooking/file/step/" + respVO.getImageName());
         }
+        
+        // 設置菜品名稱
+        if (respVO != null && dish != null) {
+            respVO.setDishName(dish.getName());
+        }
+        
         return respVO;
     }
 } 

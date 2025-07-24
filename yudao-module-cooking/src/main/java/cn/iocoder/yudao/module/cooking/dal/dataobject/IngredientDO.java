@@ -13,8 +13,8 @@ import lombok.ToString;
  *
  * @author 芋道源碼
  */
-@TableName("cooking_ingredient")
-@KeySequence("cooking_ingredient_seq") // 用於 Oracle、PostgreSQL、Kingbase、DB2、H2 資料庫的主鍵自增。如果是 MySQL 等資料庫，可不寫。
+@TableName("ingredients")
+@KeySequence("ingredient_seq") // 用於 Oracle、PostgreSQL、Kingbase、DB2、H2 資料庫的主鍵自增。如果是 MySQL 等資料庫，可不寫。
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -37,5 +37,15 @@ public class IngredientDO extends BaseDO {
      * 配料份量
      */
     private String amount;
+    /**
+     * 配料單位
+     */
+    private String unit;
+    /**
+     * 是否為可選配料
+     * 0 - 必選
+     * 1 - 可選
+     */
+    private Boolean isOptional;
 
 } 

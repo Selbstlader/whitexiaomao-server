@@ -11,10 +11,13 @@ import cn.iocoder.yudao.module.cooking.service.dish.DishService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 
@@ -32,6 +35,9 @@ public class IngredientServiceImpl implements IngredientService {
     
     @Resource
     private DishService dishService;
+    
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Long createIngredient(IngredientCreateReqVO createReqVO) {
@@ -139,7 +145,50 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public List<IngredientDO> getIngredientListByDishId(Long dishId) {
-        return ingredientMapper.selectListByDishId(dishId);
+        // 嘗試直接使用框架方法
+        List<IngredientDO> mbpResults = ingredientMapper.selectListByDishId(dishId);
+        
+        // 如果查詢結果為空，嘗試使用原生SQL查詢
+        if (mbpResults == null || mbpResults.isEmpty()) {
+            System.out.println("=== DEBUG: 框架查詢返回空，嘗試使用原生SQL查詢 ===");
+            String sql = "SELECT id, dish_id, name, amount, unit, is_optional FROM ingredients WHERE dish_id = ?";
+            
+            try {
+                List<Map<String, Object>> rawResults = jdbcTemplate.queryForList(sql, dishId);
+                System.out.println("=== DEBUG: 原生SQL查詢到 " + rawResults.size() + " 筆結果 ===");
+                
+                // 如果原生查詢有結果，手動轉換為IngredientDO
+                if (!rawResults.isEmpty()) {
+                    List<IngredientDO> convertedResults = new ArrayList<>();
+                    for (Map<String, Object> row : rawResults) {
+                        IngredientDO ingredient = new IngredientDO();
+                        
+                        // 設置基本屬性
+                        if (row.get("id") != null) ingredient.setId(((Number) row.get("id")).longValue());
+                        if (row.get("dish_id") != null) ingredient.setDishId(((Number) row.get("dish_id")).longValue());
+                        if (row.get("name") != null) ingredient.setName((String) row.get("name"));
+                        if (row.get("amount") != null) ingredient.setAmount((String) row.get("amount"));
+                        if (row.get("unit") != null) ingredient.setUnit((String) row.get("unit"));
+                        if (row.get("is_optional") != null) {
+                            Object val = row.get("is_optional");
+                            if (val instanceof Number) {
+                                ingredient.setIsOptional(((Number) val).intValue() == 1);
+                            } else if (val instanceof Boolean) {
+                                ingredient.setIsOptional((Boolean) val);
+                            }
+                        }
+                        
+                        convertedResults.add(ingredient);
+                    }
+                    return convertedResults;
+                }
+            } catch (Exception e) {
+                System.out.println("=== ERROR: 原生SQL查詢出錯: " + e.getMessage() + " ===");
+            }
+        }
+        
+        // 如果原生查詢也沒有結果或出錯，返回框架查詢結果
+        return mbpResults;
     }
     
     @Override

@@ -18,5 +18,8 @@ public class IngredientRespVO extends IngredientBaseVO {
 
     @Schema(description = "創建時間", required = true)
     private LocalDateTime createTime;
+    
+    @Schema(description = "菜品名稱")
+    private String dishName;
 
 } 
