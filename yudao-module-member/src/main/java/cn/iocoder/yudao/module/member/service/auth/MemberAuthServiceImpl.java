@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.member.service.auth;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.TerminalEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
@@ -9,7 +11,9 @@ import cn.iocoder.yudao.framework.common.util.servlet.ServletUtils;
 import cn.iocoder.yudao.module.member.controller.app.auth.vo.*;
 import cn.iocoder.yudao.module.member.convert.auth.AuthConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
+import cn.iocoder.yudao.module.member.dal.mysql.user.MemberUserMapper;
 import cn.iocoder.yudao.module.member.service.user.MemberUserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import cn.iocoder.yudao.module.system.api.logger.LoginLogApi;
 import cn.iocoder.yudao.module.system.api.logger.dto.LoginLogCreateReqDTO;
 import cn.iocoder.yudao.framework.common.biz.system.oauth2.OAuth2TokenCommonApi;
@@ -59,6 +63,10 @@ public class MemberAuthServiceImpl implements MemberAuthService {
     private SocialClientApi socialClientApi;
     @Resource
     private OAuth2TokenCommonApi oauth2TokenApi;
+    @Resource
+    private PasswordEncoder passwordEncoder;
+    @Resource
+    private MemberUserMapper memberUserMapper;
 
     @Override
     public AppAuthLoginRespVO login(AppAuthLoginReqVO reqVO) {
@@ -252,9 +260,51 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
     @Override
     public AppAuthLoginRespVO refreshToken(String refreshToken) {
-        OAuth2AccessTokenRespDTO accessTokenDO = oauth2TokenApi.refreshAccessToken(refreshToken,
-                OAuth2ClientConstants.CLIENT_ID_DEFAULT);
-        return AuthConvert.INSTANCE.convert(accessTokenDO, null);
+        OAuth2AccessTokenRespDTO accessTokenRespDTO = oauth2TokenApi.refreshAccessToken(refreshToken, OAuth2ClientConstants.CLIENT_ID_DEFAULT);
+        return AuthConvert.INSTANCE.convert(accessTokenRespDTO, null);
+    }
+
+    @Override
+    @Transactional
+    public AppAuthRegisterRespVO register(AppAuthRegisterReqVO reqVO) {
+        // 1. 校验密码确认
+        if (!Objects.equals(reqVO.getPassword(), reqVO.getConfirmPassword())) {
+            throw exception(AUTH_PASSWORD_CONFIRM_NOT_MATCH);
+        }
+
+        // 2. 校验用户名是否已存在（这里使用手机号字段存储用户名）
+        MemberUserDO existUser = userService.getUserByMobile(reqVO.getUsername());
+        if (existUser != null) {
+            throw exception(AUTH_USERNAME_USED);
+        }
+
+        // 3. 创建用户 - 使用createUserIfAbsent方法创建基础用户
+        String userIp = getClientIP();
+        MemberUserDO user = userService.createUserIfAbsent(reqVO.getUsername(), userIp, getTerminal());
+        
+        // 4. 更新用户密码和昵称
+        MemberUserDO updateUser = new MemberUserDO();
+        updateUser.setId(user.getId());
+        updateUser.setPassword(passwordEncoder.encode(reqVO.getPassword()));
+        
+        // 设置昵称
+        String nickname = reqVO.getNickname();
+        if (StrUtil.isEmpty(nickname)) {
+            nickname = "用户" + RandomUtil.randomNumbers(6);
+        }
+        updateUser.setNickname(nickname);
+        
+        // 更新用户信息
+        memberUserMapper.updateById(updateUser);
+        
+        // 重新获取用户信息
+        user = userService.getUser(user.getId());
+
+        // 5. 记录注册日志
+        createLoginLog(user.getId(), reqVO.getUsername(), LoginLogTypeEnum.LOGIN_MOBILE, LoginResultEnum.SUCCESS);
+
+        // 6. 构建返回结果
+        return AuthConvert.INSTANCE.convert(user);
     }
 
     private void createLogoutLog(Long userId) {

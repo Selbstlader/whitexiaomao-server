@@ -28,7 +28,6 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 @Tag(name = "管理後台 - 烹飪步驟")
 @RestController
 @RequestMapping("/cooking/step")
-@Validated
 public class StepController {
 
     @Resource
@@ -139,4 +138,4 @@ public class StepController {
         
         return respVO;
     }
-} 
+}

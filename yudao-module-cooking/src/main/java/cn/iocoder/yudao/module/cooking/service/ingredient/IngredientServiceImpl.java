@@ -151,7 +151,7 @@ public class IngredientServiceImpl implements IngredientService {
         // 如果查詢結果為空，嘗試使用原生SQL查詢
         if (mbpResults == null || mbpResults.isEmpty()) {
             System.out.println("=== DEBUG: 框架查詢返回空，嘗試使用原生SQL查詢 ===");
-            String sql = "SELECT id, dish_id, name, amount, unit, is_optional FROM ingredients WHERE dish_id = ?";
+            String sql = "SELECT id, dish_id, name, amount, unit, is_optional FROM cooking_ingredient WHERE dish_id = ?";
             
             try {
                 List<Map<String, Object>> rawResults = jdbcTemplate.queryForList(sql, dishId);
@@ -201,4 +201,4 @@ public class IngredientServiceImpl implements IngredientService {
             throw exception(ErrorCodeConstants.INGREDIENT_DISH_NOT_MATCH);
         }
     }
-} 
+}

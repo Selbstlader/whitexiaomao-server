@@ -1,0 +1,39 @@
+package cn.iocoder.yudao.module.member.controller.app.auth.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+
+@Schema(description = "用户 APP - 账号密码注册 Request VO")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AppAuthRegisterReqVO {
+
+    @Schema(description = "用户账号", requiredMode = Schema.RequiredMode.REQUIRED, example = "user123")
+    @NotEmpty(message = "账号不能为空")
+    @Length(min = 4, max = 20, message = "账号长度为 4-20 位")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "账号只能包含字母、数字和下划线")
+    private String username;
+
+    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
+    @NotEmpty(message = "密码不能为空")
+    @Length(min = 6, max = 20, message = "密码长度为 6-20 位")
+    private String password;
+
+    @Schema(description = "确认密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
+    @NotEmpty(message = "确认密码不能为空")
+    private String confirmPassword;
+
+    @Schema(description = "昵称", example = "小明")
+    @Length(max = 30, message = "昵称长度不能超过 30 位")
+    private String nickname;
+
+}

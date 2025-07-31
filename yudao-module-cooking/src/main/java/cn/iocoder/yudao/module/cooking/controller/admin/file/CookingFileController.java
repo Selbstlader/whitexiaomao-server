@@ -22,7 +22,7 @@ import java.io.File;
  */
 @Tag(name = "管理後台 - 烹飪相關文件")
 @RestController
-@RequestMapping("/api/cooking/file")
+@RequestMapping("/cooking/file")
 @Validated
 @Slf4j
 public class CookingFileController {

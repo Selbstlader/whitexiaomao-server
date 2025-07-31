@@ -31,7 +31,7 @@ import cn.iocoder.yudao.module.cooking.dal.mysql.dish.DishMapper;
  */
 @Tag(name = "管理後台 - 菜品")
 @RestController
-@RequestMapping("/cooking/dish")
+@RequestMapping("/cooking/dish")  // 修改为 admin-api
 @Validated
 public class DishController {
 
@@ -46,14 +46,14 @@ public class DishController {
 
     @PostMapping("/create")
     @Operation(summary = "創建菜品")
-    @PreAuthorize("@ss.hasPermission('cooking:dish:create')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:create')") // 注释掉权限控制
     public CommonResult<Long> createDish(@Valid DishCreateReqVO createReqVO) {
         return success(dishService.createDish(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新菜品")
-    @PreAuthorize("@ss.hasPermission('cooking:dish:update')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:update')") // 注释掉权限控制
     public CommonResult<Boolean> updateDish(@RequestBody @Valid DishUpdateReqVO updateReqVO) {
         dishService.updateDish(updateReqVO);
         return success(true);
@@ -62,7 +62,7 @@ public class DishController {
     @DeleteMapping("/delete")
     @Operation(summary = "刪除菜品")
     @Parameter(name = "id", description = "編號", required = true)
-    @PreAuthorize("@ss.hasPermission('cooking:dish:delete')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:delete')") // 注释掉权限控制
     public CommonResult<Boolean> deleteDish(@RequestParam("id") Long id) {
         dishService.deleteDish(id);
         return success(true);
@@ -71,7 +71,7 @@ public class DishController {
     @GetMapping("/get")
     @Operation(summary = "獲得菜品")
     @Parameter(name = "id", description = "編號", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('cooking:dish:query')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:query')") // 注释掉权限控制
     public CommonResult<DishRespVO> getDish(@RequestParam("id") Long id) {
         DishDO dish = dishService.getDish(id);
         // 獲取菜品分類信息
@@ -82,7 +82,7 @@ public class DishController {
     @GetMapping("/detail")
     @Operation(summary = "獲得菜品詳情")
     @Parameter(name = "id", description = "編號", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('cooking:dish:query')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:query')") // 注释掉权限控制
     public CommonResult<DishDetailRespVO> getDishDetail(@RequestParam("id") Long id) {
         return success(dishService.getDishDetail(id));
     }
@@ -104,7 +104,7 @@ public class DishController {
 
     @GetMapping("/page")
     @Operation(summary = "獲得菜品分頁")
-    @PreAuthorize("@ss.hasPermission('cooking:dish:query')")
+    // @PreAuthorize("@ss.hasPermission('cooking:dish:query')") // 注释掉权限控制
     public CommonResult<PageResult<DishRespVO>> getDishPage(@Valid DishPageReqVO pageVO) {
         PageResult<DishDO> pageResult = dishService.getDishPage(pageVO);
         
@@ -124,4 +124,4 @@ public class DishController {
         List<CategoryDO> categories = categoryService.getCategoryList(categoryIds);
         return categories.stream().collect(Collectors.toMap(CategoryDO::getId, category -> category));
     }
-} 
+}

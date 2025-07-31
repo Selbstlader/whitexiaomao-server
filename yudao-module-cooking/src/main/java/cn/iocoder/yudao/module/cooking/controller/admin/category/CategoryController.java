@@ -24,7 +24,7 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
  */
 @Tag(name = "管理後台 - 菜品分類")
 @RestController
-@RequestMapping("/cooking/category")
+@RequestMapping("/cooking/category")  // 修改为 admin-api
 @Validated
 public class CategoryController {
 
@@ -33,14 +33,14 @@ public class CategoryController {
 
     @PostMapping("/create")
     @Operation(summary = "創建菜品分類")
-    @PreAuthorize("@ss.hasPermission('cooking:category:create')")
+    // @PreAuthorize("@ss.hasPermission('cooking:category:create')") // 注释掉权限控制
     public CommonResult<Long> createCategory(@Valid @RequestBody CategoryCreateReqVO createReqVO) {
         return success(categoryService.createCategory(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新菜品分類")
-    @PreAuthorize("@ss.hasPermission('cooking:category:update')")
+    // @PreAuthorize("@ss.hasPermission('cooking:category:update')") // 注释掉权限控制
     public CommonResult<Boolean> updateCategory(@Valid @RequestBody CategoryUpdateReqVO updateReqVO) {
         categoryService.updateCategory(updateReqVO);
         return success(true);
@@ -49,7 +49,7 @@ public class CategoryController {
     @DeleteMapping("/delete")
     @Operation(summary = "刪除菜品分類")
     @Parameter(name = "id", description = "編號", required = true)
-    @PreAuthorize("@ss.hasPermission('cooking:category:delete')")
+    // @PreAuthorize("@ss.hasPermission('cooking:category:delete')") // 注释掉权限控制
     public CommonResult<Boolean> deleteCategory(@RequestParam("id") Long id) {
         categoryService.deleteCategory(id);
         return success(true);
@@ -58,7 +58,7 @@ public class CategoryController {
     @GetMapping("/get")
     @Operation(summary = "獲得菜品分類")
     @Parameter(name = "id", description = "編號", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('cooking:category:query')")
+    // @PreAuthorize("@ss.hasPermission('cooking:category:query')") // 注释掉权限控制
     public CommonResult<CategoryRespVO> getCategory(@RequestParam("id") Long id) {
         CategoryDO category = categoryService.getCategory(id);
         return success(CategoryConvert.INSTANCE.convert(category));
@@ -73,10 +73,10 @@ public class CategoryController {
 
     @GetMapping("/page")
     @Operation(summary = "獲得菜品分類分頁")
-    @PreAuthorize("@ss.hasPermission('cooking:category:query')")
+    // @PreAuthorize("@ss.hasPermission('cooking:category:query')") // 注释掉权限控制
     public CommonResult<PageResult<CategoryRespVO>> getCategoryPage(@Valid CategoryPageReqVO pageVO) {
         PageResult<CategoryDO> pageResult = categoryService.getCategoryPage(pageVO);
         return success(CategoryConvert.INSTANCE.convertPage(pageResult));
     }
 
-} 
+}

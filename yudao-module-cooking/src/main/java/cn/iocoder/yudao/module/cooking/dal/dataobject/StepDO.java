@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.cooking.dal.dataobject;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class StepDO extends BaseDO {
     /**
      * 步驟圖片名稱
      */
+    @TableField("image_url")
     private String imageName;
 
-} 
+}

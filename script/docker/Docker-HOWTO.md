@@ -45,5 +45,5 @@ docker compose --env-file docker.env up -d
 
 - admin ui: http://localhost:8080
 - api server: http://localhost:48080
-- mysql: root/123456, port: 3306
+- mysql: root/123456, port: 13306
 - redis: port: 6379

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
  *
  * @author 芋道源码
  */
-@TableName("categories")
+@TableName("cooking_category")
 @KeySequence("categories_seq")
 @Data
 @Builder

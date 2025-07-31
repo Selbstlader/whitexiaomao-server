@@ -85,4 +85,12 @@ public interface MemberAuthService {
      */
     AppAuthLoginRespVO refreshToken(String refreshToken);
 
+    /**
+     * 账号密码注册
+     *
+     * @param reqVO 注册信息
+     * @return 注册结果
+     */
+    AppAuthRegisterRespVO register(@Valid AppAuthRegisterReqVO reqVO);
+
 }

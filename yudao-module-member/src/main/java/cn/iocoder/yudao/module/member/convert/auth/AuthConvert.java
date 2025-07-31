@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.member.convert.auth;
 import cn.iocoder.yudao.module.member.controller.app.auth.vo.*;
 import cn.iocoder.yudao.module.member.controller.app.social.vo.AppSocialUserUnbindReqVO;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.AppMemberUserResetPasswordReqVO;
+import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
 import cn.iocoder.yudao.framework.common.biz.system.oauth2.dto.OAuth2AccessTokenRespDTO;
 import cn.iocoder.yudao.module.system.api.sms.dto.code.SmsCodeSendReqDTO;
 import cn.iocoder.yudao.module.system.api.sms.dto.code.SmsCodeUseReqDTO;
@@ -31,5 +32,7 @@ public interface AuthConvert {
     SmsCodeValidateReqDTO convert(AppAuthSmsValidateReqVO bean);
 
     SocialWxJsapiSignatureRespDTO convert(SocialWxJsapiSignatureRespDTO bean);
+
+    AppAuthRegisterRespVO convert(MemberUserDO user);
 
 }

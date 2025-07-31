@@ -25,7 +25,6 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 @Tag(name = "管理後台 - 烹飪小貼士")
 @RestController
 @RequestMapping("/cooking/tip")
-@Validated
 public class TipController {
 
     @Resource
@@ -86,4 +85,4 @@ public class TipController {
         return success(tipService.batchCreateTip(batchCreateReqVO));
     }
 
-} 
+}
