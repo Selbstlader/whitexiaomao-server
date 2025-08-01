@@ -23,6 +23,8 @@ public class SecurityConfiguration {
                 registry.requestMatchers(buildAdminApi("/cooking/**")).permitAll();
                 // 文件访问接口 - 修正路径配置
                 registry.requestMatchers("/admin-api/cooking/file/**").permitAll();
+                // 确保所有cooking相关的请求都不需要认证
+                registry.requestMatchers("/cooking/**").permitAll();
             }
 
         };

@@ -29,7 +29,7 @@ public interface CategoryMapper extends BaseMapperX<CategoryDO> {
      * @param name 名稱
      * @return 分類
      */
-    @Select("SELECT id, name FROM categories WHERE name = #{name} LIMIT 1")
+    @Select("SELECT id, name FROM cooking_category WHERE name = #{name} LIMIT 1")
     CategoryDO selectByName(String name);
 
     /**
@@ -57,7 +57,7 @@ public interface CategoryMapper extends BaseMapperX<CategoryDO> {
      * 
      * @return 分類列表
      */
-    @Select("SELECT id, name FROM categories ORDER BY id ASC")
+    @Select("SELECT id, name FROM cooking_category ORDER BY id ASC")
     List<CategoryDO> selectList();
     
     /**
@@ -74,4 +74,4 @@ public interface CategoryMapper extends BaseMapperX<CategoryDO> {
                 .select(CategoryDO::getId, CategoryDO::getName)
                 .in(CategoryDO::getId, ids));
     }
-} 
+}

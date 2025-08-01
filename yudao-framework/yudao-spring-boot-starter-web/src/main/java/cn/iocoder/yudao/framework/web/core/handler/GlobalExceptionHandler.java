@@ -29,6 +29,7 @@ import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -235,6 +236,17 @@ public class GlobalExceptionHandler {
     public CommonResult<?> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
         log.warn("[httpRequestMethodNotSupportedExceptionHandler]", ex);
         return CommonResult.error(METHOD_NOT_ALLOWED.getCode(), String.format("请求方法不正确:%s", ex.getMessage()));
+    }
+    
+    /**
+     * 处理 SpringMVC 媒体类型不可接受的异常
+     *
+     * 例如说，接口设置了 produces = "application/json"，但客户端的 Accept 头不匹配
+     */
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public CommonResult<?> httpMediaTypeNotAcceptableExceptionHandler(HttpMediaTypeNotAcceptableException ex) {
+        log.warn("[httpMediaTypeNotAcceptableExceptionHandler]", ex);
+        return CommonResult.error(BAD_REQUEST.getCode(), String.format("不支持的媒体类型:%s", ex.getMessage()));
     }
 
     /**
