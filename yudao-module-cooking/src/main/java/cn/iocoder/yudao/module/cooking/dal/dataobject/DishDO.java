@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.cooking.enums.DishDifficultyEnum;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -41,6 +42,7 @@ public class DishDO extends BaseDO {
     /**
      * 菜品圖片名稱
      */
+    @TableField("image_name")
     private String imageName;
     /**
      * 難度等級
@@ -53,4 +55,4 @@ public class DishDO extends BaseDO {
      */
     private Integer cookingTime;
 
-} 
+}

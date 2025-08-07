@@ -1,10 +1,10 @@
 package cn.iocoder.yudao.module.cooking.service.dish;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.cooking.controller.admin.dish.vo.*;
 import cn.iocoder.yudao.module.cooking.controller.admin.ingredient.vo.IngredientRespVO;
 import cn.iocoder.yudao.module.cooking.controller.admin.step.vo.StepRespVO;
@@ -19,6 +19,7 @@ import cn.iocoder.yudao.module.cooking.dal.mysql.*;
 import cn.iocoder.yudao.module.cooking.dal.mysql.category.CategoryMapper;
 import cn.iocoder.yudao.module.cooking.dal.mysql.dish.DishMapper;
 import cn.iocoder.yudao.module.cooking.enums.ErrorCodeConstants;
+import cn.iocoder.yudao.module.infra.service.file.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 
 /**
- * 菜品 Service 實現類
+ * 菜品 Service 实现类
  *
  * @author 芋道源碼
  */
@@ -44,8 +45,17 @@ import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionU
 public class DishServiceImpl implements DishService {
 
     @Resource
-    private DishMapper dishMapper;
+    private FileService fileService; // 注入统一文件服务
 
+    // 图片存储路径
+    private static final String IMAGE_PATH = "cooking_images/";
+    
+    // 允许的图片扩展名
+    private static final String[] ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
+
+    @Resource
+    private DishMapper dishMapper;
+    
     @Resource
     private CategoryMapper categoryMapper;
 
@@ -61,18 +71,15 @@ public class DishServiceImpl implements DishService {
     @Resource
     private StarRatingMapper starRatingMapper;
 
-    private static final String IMAGE_PATH = "cooking_images/dishes/";
-    private static final String[] ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif"};
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createDish(DishCreateReqVO createReqVO) {
-        // 校驗分類存在
+        // 校验分類存在
         validateCategoryExists(createReqVO.getCategoryId());
-        // 校驗菜品名稱是否已存在
+        // 校验菜品名稱是否已存在
         validateDishNameUnique(null, createReqVO.getName());
 
-        // 處理圖片
+        // 处理图片
         String imageName = null;
         if (createReqVO.getImageFile() != null && !createReqVO.getImageFile().isEmpty()) {
             imageName = processImage(createReqVO.getImageFile());
@@ -88,22 +95,22 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateDish(DishUpdateReqVO updateReqVO) {
-        // 校驗存在
+        // 校验存在
         validateDishExists(updateReqVO.getId());
-        // 校驗分類存在
+        // 校验分類存在
         validateCategoryExists(updateReqVO.getCategoryId());
-        // 校驗菜品名稱是否已存在
+        // 校验菜品名稱是否已存在
         validateDishNameUnique(updateReqVO.getId(), updateReqVO.getName());
 
-        // 處理圖片
+        // 处理图片
         DishDO oldDish = dishMapper.selectById(updateReqVO.getId());
         String imageName = oldDish.getImageName();
         if (updateReqVO.getImageFile() != null && !updateReqVO.getImageFile().isEmpty()) {
-            // 刪除舊圖片
+            // 删除旧图片
             if (StrUtil.isNotBlank(imageName)) {
                 deleteImage(imageName);
             }
-            // 處理新圖片
+            // 处理新图片
             imageName = processImage(updateReqVO.getImageFile());
         }
 
@@ -116,7 +123,7 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDish(Long id) {
-        // 校驗存在
+        // 校验存在
         validateDishExists(id);
 
         // 刪除菜品圖片
@@ -156,7 +163,7 @@ public class DishServiceImpl implements DishService {
         if (id == null) {
             throw exception(ErrorCodeConstants.DISH_NAME_DUPLICATE);
         }
-        // 如果 id 不為空，說明是更新時校驗，如果名稱重複且不是當前菜品，則報錯
+        // 如果 id 不為空，說明是更新時校验，如果名稱重複且不是當前菜品，則报错
         if (!id.equals(dish.getId())) {
             throw exception(ErrorCodeConstants.DISH_NAME_DUPLICATE);
         }
@@ -241,29 +248,21 @@ public class DishServiceImpl implements DishService {
             return null;
         }
 
-        // 驗證文件類型
+        // 验证文件类型
         String originalFilename = imageFile.getOriginalFilename();
         if (!isValidImageExtension(originalFilename)) {
             throw exception(ErrorCodeConstants.DISH_IMAGE_UPLOAD_FAILED, "不支持的圖片格式");
         }
 
         try {
-            // 確保目錄存在
-            File uploadDir = new File(IMAGE_PATH);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            // 生成唯一文件名
-            String fileExtension = FileUtil.extName(originalFilename);
-            String uniqueFilename = UUID.randomUUID().toString(true) + "." + fileExtension;
-            String filePath = IMAGE_PATH + uniqueFilename;
-
-            // 保存文件
-            File targetFile = new File(filePath);
-            imageFile.transferTo(targetFile);
-
-            return uniqueFilename;
+            // 调用框架封装的上传功能，返回访问 URL
+            byte[] content = imageFile.getBytes();
+            return fileService.createFile(
+                    content,
+                    originalFilename,
+                    "cooking/dishes", // 业务目录
+                    imageFile.getContentType()
+            );
         } catch (IOException e) {
             log.error("圖片上傳失敗", e);
             throw exception(ErrorCodeConstants.DISH_IMAGE_UPLOAD_FAILED);
@@ -300,4 +299,4 @@ public class DishServiceImpl implements DishService {
         List<DishDO> list = dishMapper.selectBatchByIds(ids);
         return list.stream().collect(Collectors.toMap(DishDO::getId, dish -> dish));
     }
-} 
+}

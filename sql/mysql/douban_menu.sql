@@ -1,0 +1,31 @@
+-- 豆瓣电影模块菜单权限配置
+
+-- 豆瓣电影主菜单 (ID: 40000)
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40000, '豆瓣电影', '', 1, 4, 0, '/douban', 'ep:film', NULL, NULL, 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 电影管理菜单 (ID: 40001)
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40001, '电影管理', 'douban:movie:query', 2, 1, 40000, 'movie', 'ep:video-camera', 'douban/movie/index', 'DoubanMovie', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 电影管理权限
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40002, '电影查询', 'douban:movie:query', 3, 1, 40001, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40003, '电影创建', 'douban:movie:create', 3, 2, 40001, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40004, '电影更新', 'douban:movie:update', 3, 3, 40001, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40005, '电影删除', 'douban:movie:delete', 3, 4, 40001, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 用户管理菜单 (ID: 40006)
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40006, '用户管理', 'douban:user:query', 2, 2, 40000, 'user', 'ep:user', 'douban/user/index', 'DoubanUser', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 用户管理权限
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40007, '用户查询', 'douban:user:query', 3, 1, 40006, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40008, '用户创建', 'douban:user:create', 3, 2, 40006, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40009, '用户更新', 'douban:user:update', 3, 3, 40006, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40010, '用户删除', 'douban:user:delete', 3, 4, 40006, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 评论管理菜单 (ID: 40011)
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40011, '评论管理', 'douban:comment:query', 2, 3, 40000, 'comment', 'ep:chat-dot-round', 'douban/comment/index', 'DoubanComment', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+
+-- 评论管理权限
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40012, '评论查询', 'douban:comment:query', 3, 1, 40011, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40013, '评论创建', 'douban:comment:create', 3, 2, 40011, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40014, '评论更新', 'douban:comment:update', 3, 3, 40011, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted) VALUES (40015, '评论删除', 'douban:comment:delete', 3, 4, 40011, '', '', '', '', 0, b'1', b'1', b'1', '1', '2024-01-01 00:00:00', '1', '2024-01-01 00:00:00', b'0');
